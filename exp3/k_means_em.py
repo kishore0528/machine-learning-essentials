@@ -8,13 +8,14 @@ Original file is located at
 """
 
 import pandas as pd
+import matplotlib.pyplot as plt
 from sklearn.cluster import KMeans
 from sklearn.mixture import GaussianMixture
 from sklearn.metrics import silhouette_score
 
 # --- Load dataset ---
 data = pd.read_csv("patient_data1.csv")
-X = data[['Age', 'Glucose', 'BloodPressure', 'Insulin', 'BMI']]
+X = data[['Age', 'Insulin']]
 
 # --- K-Means ---
 kmeans = KMeans(n_clusters=3, random_state=42)
@@ -37,21 +38,33 @@ else:
     print("\n✅ K-Means performs better.")
     data['Cluster'] = k_labels
 
-# --- Simple Treatment Plan based on Clusters ---
+# --- Visualisation ---
+fig, axes = plt.subplots(1, 2, figsize=(10, 4))
+
+axes[0].scatter(data['Age'], data['Insulin'], c=k_labels, cmap='viridis')
+axes[0].set_title("K-Means Clustering")
+axes[0].set_xlabel("Age")
+axes[0].set_ylabel("Insulin")
+
+axes[1].scatter(data['Age'], data['Insulin'], c=g_labels, cmap='viridis')
+axes[1].set_title("EM (Gaussian Mixture) Clustering")
+axes[1].set_xlabel("Age")
+axes[1].set_ylabel("Insulin")
+
+plt.tight_layout()
+plt.show()
+
+# --- Treatment Plan based on Clusters ---
 for c in range(3):
     group = data[data['Cluster'] == c]
     avg_age = group['Age'].mean()
-    avg_glucose = group['Glucose'].mean()
-    avg_bp = group['BloodPressure'].mean()
     avg_insulin = group['Insulin'].mean()
-    avg_bmi = group['BMI'].mean()
 
-    print(f"\nCluster {c+1} — Avg(Age): {avg_age:.1f}, Glucose: {avg_glucose:.1f}, BP: {avg_bp:.1f}, "
-          f"Insulin: {avg_insulin:.1f}, BMI: {avg_bmi:.1f}")
+    print(f"\nCluster {c+1} — Avg(Age): {avg_age:.1f}, Avg(Insulin): {avg_insulin:.1f}")
 
-    if avg_glucose > 160 or avg_bmi > 28 or avg_bp > 90:
-        print("  → Suggested Treatment: Intensive care + glucose & weight control")
-    elif avg_glucose > 130:
-        print("  → Suggested Treatment: Mild medication + balanced diet + exercise")
+    if avg_insulin > 150:
+        print("  → Suggested Treatment: Intensive insulin therapy + regular monitoring")
+    elif avg_insulin > 100:
+        print("  → Suggested Treatment: Moderate medication + diet control")
     else:
-        print("  → Suggested Treatment: Routine check-up only")
+        print("  → Suggested Treatment: Regular health check-up only")
