@@ -24,23 +24,9 @@ def extract_features(image_path):
     features = np.concatenate((hist_r, hist_g, hist_b)).flatten()
     return features
 
-# --- Manual Picture Addition (Example Paths) ---
-# Replace these with the actual paths to your image files
-healthy_leaf_paths = [
-    "/content/h1.jpg",
-    "/content/h2.jpg",
-    "/content/h3.jpg",
-    "/content/h4.jpg",
-    "/content/h5.jpg"
-]
-
-diseased_leaf_paths = [
-    "/content/d1.jpg",
-    "/content/d2.jpg",
-    "/content/d3.jpg",
-    "/content/d4.jpg",
-    "/content/d5.jpg"
-]
+# dataset
+healthy_leaf_paths = [f"/content/h{i}.jpg" for i in range(1, 6)]
+diseased_leaf_paths = [f"/content/d{i}.jpg" for i in range(1, 6)]
 
 # --- Feature Extraction and Labeling ---
 features = []
